@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.developer.challenger.model.Enquete;
+import com.developer.challenger.model.Option;
+import com.developer.challenger.model.OptionsStats;
+import com.developer.challenger.model.Votes;
 import com.developer.challenger.services.EnqueteService;
 
 @RestController
@@ -39,6 +42,16 @@ public class EnqueteResource {
 	public ResponseEntity<?> findAll(){
 		List<Enquete> enquetes = this.enqueteService.findAll();
 		return new ResponseEntity<List>(enquetes, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/{id}/stats")
+	@ResponseBody
+	public ResponseEntity<?> votes(Long id){
+		List<Option> votes = (List<Option>) this.enqueteService.votes(id);
+		if(votes != null) {
+			System.out.println("Vazio");
+		}
+		return new ResponseEntity<List>(votes, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/{id}")
@@ -68,5 +81,12 @@ public class EnqueteResource {
 		Enquete enqueteUpdate = this.enqueteService.update(id, enquete);
 		return new ResponseEntity<Enquete>(enqueteUpdate, HttpStatus.OK);
 	}
-
+	
+	@PostMapping(value="/{id}/vote")
+	@ResponseBody
+	public int saveVotes(@Valid @RequestBody Votes votes){
+		int enquete = this.enqueteService.saveVote(votes);
+		return enquete;
+	}
+	
 }

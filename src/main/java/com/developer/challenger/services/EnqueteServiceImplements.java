@@ -1,5 +1,6 @@
 package com.developer.challenger.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,13 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.developer.challenger.model.Enquete;
+import com.developer.challenger.model.Option;
+import com.developer.challenger.model.OptionsStats;
+import com.developer.challenger.model.Votes;
 import com.developer.challenger.repository.EnqueteOptionsRepository;
+import com.developer.challenger.repository.OptionsRepository;
+import com.developer.challenger.repository.VotesRepository;
 
 @Service
 public class EnqueteServiceImplements implements EnqueteService {
 	
 	@Autowired
 	private EnqueteOptionsRepository enqueteOptionsRepository;
+	
+	@Autowired
+	private OptionsRepository optionsRepository;
+	
+	@Autowired
+	private VotesRepository votesRepository;
 
 	@Override
 	public List<Enquete> findAll() {	
@@ -51,5 +63,19 @@ public class EnqueteServiceImplements implements EnqueteService {
 		return null;
 	}
 
+	@Override
+	public List<?> votes(long id) {
+		List<Option> votes = (List<Option>) this.optionsRepository.votesCount(id);
+		if(votes == null) {
+			System.out.println("Erro, está vazio");
+		}
+		return votes;
+	}
+
+	@Override
+	public int saveVote(Votes votes) {
+		Votes newVotes = this.votesRepository.save(votes);
+		return newVotes.getEnquete();
+	}
 	
 }
